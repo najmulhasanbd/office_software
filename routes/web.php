@@ -19,6 +19,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [FrontendController::class, 'userDashboard'])->name('user.dashboard');
 
     Route::post('sales/store', [FrontendController::class, 'store'])->name('sales.store');
+
+    Route::get('sales/list',[FrontendController::class,'salesList'])->name('sales.list');
+    Route::get('sales/report',[FrontendController::class,'salesReport'])->name('sales.report');
 });
 
 

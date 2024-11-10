@@ -55,26 +55,24 @@ class AdminController extends Controller
 
     public function adminSalesList(Request $request)
     {
-        $filter = $request->sale_filter;
-
-        if ($filter == 'today') {
-            $salesData = Sales::whereDate('created_at', Carbon::today())->latest()->paginate(20);
-        } elseif ($filter == 'yesterday') {
-            $salesData = Sales::whereDate('created_at', Carbon::yesterday())->latest()->paginate(20);
-            // dd('here');
-        } elseif ($filter == 'weekly') {
-            $salesData = Sales::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->latest()->paginate(20);
-        } elseif ($filter == 'monthly') {
-            $salesData = Sales::whereMonth('created_at', Carbon::now()->month)->latest()->paginate(20);
-        } elseif ($filter == 'year') {
-            $salesData = Sales::whereYear('created_at', Carbon::now()->year)->latest()->paginate(20);
-        } else {
-            $salesData = Sales::latest()->paginate(20);
-        }
+        //dd($request->all());
+        $date=$request->date;
+        $salesquery = Sales::latest();
+        if ($request->filled('date')) {
+            $dateRange = explode(" - ", $date);
+            $startDate = date('Y-m-d', strtotime($dateRange[0]));
+            $endDate = date('Y-m-d', strtotime($dateRange[1]));
+            $salesquery->where(function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('created_at', [$startDate, $endDate])
+                    ->orWhereDate('created_at', $startDate);
+            });
+         }
+        
+        $salesData =$salesquery->paginate(20);
 
         $TotalSalesAmount = $salesData->sum('amount');
 
-        return view('admin.sales_list', compact('salesData', 'TotalSalesAmount', 'filter'));
+        return view('admin.sales_list', compact('salesData', 'TotalSalesAmount','date'));
     }
 
 

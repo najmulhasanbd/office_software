@@ -34,9 +34,21 @@
         .dropdown-menus a {
             color: #fff;
         }
+
         #userDropdown {
-	cursor: pointer;
-}
+            cursor: pointer;
+        }
+        ul{
+            margin: 0;
+            padding: 0 ;
+            outline: none
+        }
+        li{
+            list-style: none
+        }
+        a{
+            text-decoration: none
+        }
     </style>
 </head>
 
@@ -82,12 +94,12 @@
     </script>
     <script>
         // JavaScript to toggle dropdown visibility
-        document.getElementById('userDropdown').addEventListener('click', function () {
+        document.getElementById('userDropdown').addEventListener('click', function() {
             document.getElementById('dropdownMenu').classList.toggle('show');
         });
-    
+
         // Close dropdown if clicked outside
-        document.addEventListener('click', function (event) {
+        document.addEventListener('click', function(event) {
             var dropdown = document.getElementById('dropdownMenu');
             var toggle = document.getElementById('userDropdown');
             if (!toggle.contains(event.target) && !dropdown.contains(event.target)) {

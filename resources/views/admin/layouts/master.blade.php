@@ -27,6 +27,8 @@
     <link rel="stylesheet" href="{{ asset('backend') }}/plugins/daterangepicker/daterangepicker-bs3.css">
     <!-- bootstrap wysihtml5 - text editor -->
     <link rel="stylesheet" href="{{ asset('backend') }}/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+
+
     <style>
         .navbar-nav>.user-menu>.dropdown-menu>.user-footer {
             background-color: #ECF0F5 !important;
@@ -89,7 +91,7 @@
     <script src="{{ asset('backend') }}/dist/js/demo.js"></script>
 
 
-    
+
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">

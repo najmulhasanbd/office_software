@@ -14,15 +14,21 @@
                     <div>
                         <form action="" method="get" id="filterForm">
                             @csrf
-                            <select name="sale_filter" id="filter" onchange="document.getElementById('filterForm').submit()" class="form-control">
-                                <option value="">Select One</option>
-                                <option value="today" {{ $filter == 'today' ? 'selected' : '' }}>Today</option>
-                                <option value="yesterday" {{ $filter == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
-                                <option value="weekly" {{ $filter == 'weekly' ? 'selected' : '' }}>Weekly</option>
-                                <option value="monthly" {{ $filter == 'monthly' ? 'selected' : '' }}>This Month</option>
-                                <option value="year" {{ $filter == 'year' ? 'selected' : '' }}>This Year</option>
-                            </select>
-                        </form>    
+
+                            <div style="display: flex; align-items:center;gap:5px">
+                                <div class="custom_select">
+                                    <input type="text" id="reportrange"
+                                        style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%"
+                                        name="date" placeholder="Filter by date" data-format="DD-MM-Y"
+                                        value="{{ $date }}" data-separator=" - " autocomplete="off">
+                                    <input type="hidden" id="dateadd" class="form-control " name="dateadd"
+                                        data-format="DD-MM-Y" value="{{ $date }}" autocomplete="off">
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-success btn-sm" style="font-size: 15px">Filter</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div><!-- /.box-header -->
@@ -84,10 +90,60 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="pagination">
-                    {{ $salesData->links() }}
-                </div>
-            </div>           
+                @if ($salesData)
+                    <div class="pagination">
+                        {{ $salesData->links() }}
+                    </div>
+                @endif
+
+            </div>
         </div>
     </section>
+
+
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+
+    <script type="text/javascript">
+        $(function() {
+            var dateValue = $('input[name="date"]').val();
+            var start, end;
+            if (dateValue) {
+                var dates = dateValue.split(' - ');
+                start = moment(dates[0], 'MM/DD/YYYY');
+                end = moment(dates[1], 'MM/DD/YYYY');
+            } else {
+                start = moment();
+                end = moment();
+            }
+            $('input[name="date"]').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
+                }
+            });
+
+            function cb(start, end) {
+                $('#reportrange').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1,
+                        'month').endOf('month')]
+                }
+            }, cb);
+            cb(start, end);
+        });
+    </script>
 @endsection
