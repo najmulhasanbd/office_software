@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Vendor\VendorController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -12,10 +12,15 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard', function () {
-    // return view('dashboard');
-    return view('frontend.layout.dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
+
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/dashboard', [FrontendController::class, 'userDashboard'])->name('user.dashboard');
+
+    Route::post('sales/store', [FrontendController::class, 'store'])->name('sales.store');
+});
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -28,4 +33,8 @@ require __DIR__ . '/auth.php';
 //admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('admin/sales/list', [AdminController::class, 'adminSalesList'])->name('admin.sales.list');
+    Route::put('admin/sale/update/{id}', [AdminController::class, 'adminSaleUpdate'])->name('admin.sale.update');
+    Route::post('/admin/sales/filter', [AdminController::class, 'filterSales'])->name('admin.sales.filter');
+    
 });

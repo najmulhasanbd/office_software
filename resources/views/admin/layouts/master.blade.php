@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 2 | Dashboard</title>
+    <title>Classic | Dashboard</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.5 -->
     <link rel="stylesheet" href="{{ asset('backend/bootstrap/css/bootstrap.min.css') }}">
@@ -87,6 +87,39 @@
     <script src="{{ asset('backend') }}/dist/js/pages/dashboard.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{{ asset('backend') }}/dist/js/demo.js"></script>
+
+
+    
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', { packages: ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+    
+        function drawChart() {
+            const data = google.visualization.arrayToDataTable([
+                ['Month', 'Sales Amount', { role: 'style' }],
+                @foreach ($monthlySales as $month => $total)
+                    [
+                        "{{ \Carbon\Carbon::create()->month($month)->format('F') }}",
+                        {{ $total }},
+                        "{{ sprintf('#%06X', mt_rand(0, 0xFFFFFF)) }}" // Random color for each month
+                    ],
+                @endforeach
+            ]);
+    
+            const options = {
+                title: 'Month-wise Sales Report',
+                bar: { groupWidth: '75%' },
+                legend: { position: 'none' },
+                vAxis: { title: 'Sales Amount' },
+                hAxis: { title: 'Month' },
+            };
+    
+            const chart = new google.visualization.BarChart(document.getElementById('barchart'));
+            chart.draw(data, options);
+        }
+    </script>
 </body>
 
 </html>
