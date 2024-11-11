@@ -13,18 +13,11 @@
             color: #fff
         }
 
-        .dashboard_bg {
-            position: absolute;
-            top: 0;
-            width: 100%;
-        }
 
         .dashboard_bg {}
     </style>
-    <div class="dashboard_bg"
-        style="background: url('{{ asset('frontend/bg.jpg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; height: 100vh;">
+    <div class="dashboard_bg">
         <div class="container py-5">
-
             <div class="row">
                 <div class="col-md-6 mx-auto">
                     <div class="card p-3" style="margin-top: 70px">
@@ -67,8 +60,7 @@
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-secondary my-2" onclick="addFormFields()">Add
-                                More</button>
+                            <button type="button" class="btn btn-success my-2" onclick="addFormFields()">Add More</button>
 
                             <button type="submit" class="btn text-white w-100"
                                 style="background: #335DFF;"><b>Submit</b></button>
@@ -89,7 +81,7 @@
             newFields.classList.add("form-group-set");
             newFields.innerHTML = `
         <div class="text-end" onclick="removeFormFields(this)">
-            <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-minus"></i> Remove</button>
+            <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Remove</button>
         </div>
         <div class="form-group">
             <label for="purpose"><b>Purpose</b></label>

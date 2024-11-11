@@ -22,7 +22,8 @@
                         <td>{{ $item->phone }}</td>
                         <td>{{ ucwords($item->address) }}</td>
                         <td>
-                            <a href="{{ route('sales.invoice.show', ['name' => $item->name, 'phone' => $item->phone, 'address' => $item->address]) }}" class="btn btn-sm btn-primary">Details</a>
+                            <a href="{{ route('sales.invoice.show', ['name' => $item->name, 'phone' => $item->phone, 'address' => $item->address]) }}"
+                                class="btn btn-sm btn-primary">Details</a>
                         </td>
                     </tr>
                 @endforeach

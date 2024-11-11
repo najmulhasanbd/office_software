@@ -60,8 +60,6 @@ class FrontendController extends Controller
         return redirect()->back()->with('success', "Sales Recorded Successfully!");
     }
 
-
-
     public function  salesList(Request $request)
     {
 
@@ -123,14 +121,13 @@ class FrontendController extends Controller
         $name = $request->name;
         $phone = $request->phone;
         $address = $request->address;
-    
+
         $relatedInvoices = Sales::where('name', $name)
             ->where('phone', $phone)
             ->where('address', $address)
             ->orderBy('created_at', 'desc')
             ->get();
-    
+
         return view('frontend.sales_invoice_show', compact('relatedInvoices', 'name', 'phone', 'address'));
     }
-    
 }

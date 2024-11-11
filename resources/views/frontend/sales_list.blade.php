@@ -1,6 +1,11 @@
 @extends('frontend.layout.master')
 
 @section('user_content')
+<style>
+    tr td{
+        vertical-align: middle
+    }
+</style>
     <div class="purpose_table py-5">
         <div class="container">
             <div class="text-end mb-2">
@@ -20,6 +25,8 @@
                                 <tr>
                                     <th style="width: 10px">SL</th>
                                     <th style="width: 100px">Date & Time</th>
+                                    <th style="width: 100px">Name</th>
+                                    <th style="width: 100px">Phone</th>
                                     <th style="width: 300px">Purpose</th>
                                     <th style="width: 100px">Amount</th>
                                     <th style="width: 50px">Status</th>
@@ -31,6 +38,8 @@
                                         <td>{{ $key + 1 }}</td>
                                         {{-- <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('d F Y h:i A') }}</td> --}}
                                         <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('d M Y h:i A') }}</td>
+                                        <td>{{ ucwords($sale->name) }}</td>
+                                        <td>{{ $sale->phone }}</td>
                                         <td>{{ $sale->purpose }}</td>
                                         <td class="d-flex justify-content-between">৳ {{ $sale->amount }}</td>
                                         <td>
