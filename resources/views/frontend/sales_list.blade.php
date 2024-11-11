@@ -1,57 +1,52 @@
-
 @extends('frontend.layout.master')
 
 @section('user_content')
-    
-<div class="purpose_table py-5">
-    <div class="container">
-        <div class="text-end mb-2">
-            <a href="{{route('user.dashboard')}}" class="btn btn-primary">Back</a>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <table class="table table-bordered table-striped table-hover">
-                    <thead class="table-primary">
-                        <tr>
-                            <th style="width: 10px">SL</th>
-                            <th style="width: 100px">Date</th>
-                            <th style="width: 100px">Time</th>
-                            <th style="width: 200px">Purpose</th>
-                            <th style="width: 100px">Amount</th>
-                            <th style="width: 50px">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($salesData as $key => $data)
-                            <tr>
-                                <td>{{ ($salesData->currentPage() - 1) * $salesData->perPage() + $key + 1 }}</td>
-                                <td>{{ \Carbon\Carbon::now('Asia/Dhaka')->format('d F Y') }}</td>
-
-                                <td>
-                                    {{ \Carbon\Carbon::parse($data->created_at)->timezone('Asia/Dhaka')->format('h:i A') }}
-                                </td>
-
-
-
-                                <td>{{ $data->purpose }}</td>
-                                <td class="d-flex justify-content-between">
-                                    ৳ {{ $data->amount }}
-                                </td>
-                                <td>
-                                    @if ($data->updated_at != $data->created_at)
-                                        <small style="color: gray">Edit by Admin</small>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                </table>
-                <!-- Pagination Links -->
-                <div class="pagination">
-                    {{ $salesData->links() }}
-                </div>
+    <div class="purpose_table py-5">
+        <div class="container">
+            <div class="text-end mb-2">
+                <a href="{{ route('user.dashboard') }}" class="btn btn-primary">Back</a>
             </div>
+            <div class="row">
+                @foreach ($salesData as $date => $data)
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h5>
+                            Sales List ({{ \Carbon\Carbon::parse($date)->format('d F Y') }}):
+                        </h5>
+                        <p><strong>Total Amount:</strong> ৳ {{ $data['total_amount'] }}</p>
+                    </div>
+                    <div class="col-12">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th style="width: 10px">SL</th>
+                                    <th style="width: 100px">Date & Time</th>
+                                    <th style="width: 300px">Purpose</th>
+                                    <th style="width: 100px">Amount</th>
+                                    <th style="width: 50px">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($data['sales'] as $key => $sale)
+                                    <tr>
+                                        <td>{{ $key + 1 }}</td>
+                                        {{-- <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('d F Y h:i A') }}</td> --}}
+                                        <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('d M Y h:i A') }}</td>
+                                        <td>{{ $sale->purpose }}</td>
+                                        <td class="d-flex justify-content-between">৳ {{ $sale->amount }}</td>
+                                        <td>
+                                            @if ($sale->updated_at != $sale->created_at)
+                                                <small style="color: gray">Edit by Admin</small>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endforeach
+            </div>
+
+
         </div>
     </div>
-</div>
-
 @endsection
