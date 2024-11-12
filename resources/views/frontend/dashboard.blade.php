@@ -59,13 +59,10 @@
                                         step="0.1" required>
                                 </div>
                             </div>
-
                             <button type="button" class="btn btn-success my-2" onclick="addFormFields()">Add More</button>
-
                             <button type="submit" class="btn text-white w-100"
                                 style="background: #335DFF;"><b>Submit</b></button>
                         </form>
-
                     </div>
                 </div>
             </div>

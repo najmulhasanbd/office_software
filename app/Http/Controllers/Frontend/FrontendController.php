@@ -46,88 +46,107 @@ class FrontendController extends Controller
             'purpose.*' => 'required|string',
         ]);
 
+        $datePart = date('dmy');
 
-        foreach ($request->purpose as $index => $purpose) {
-            Sales::create([
-                'amount' => $request->amount[$index],
-                'purpose' => $purpose,
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'address' => $request->address,
-            ]);
+        $lastInvoice = Sales::whereDate('created_at', today())
+            ->orderBy('invoice_id', 'desc')
+            ->first();
+
+        if ($lastInvoice) {
+            $lastSequence = (int) substr($lastInvoice->invoice_id, -2);
+            $newSequence = str_pad($lastSequence + 1, 2, '0', STR_PAD_LEFT);
+        } else {
+            $newSequence = '01';
         }
+
+        $invoice_id = $datePart . $newSequence;
+
+
+        Sales::create([
+            'invoice_id' => $invoice_id,
+            'amount' => json_encode($request->amount),
+            'purpose' => json_encode($request->purpose),
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+        ]);
 
         return redirect()->back()->with('success', "Sales Recorded Successfully!");
     }
 
+
     public function  salesList(Request $request)
     {
 
-        $salesData = Sales::orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy(function ($date) {
-                return \Carbon\Carbon::parse($date->created_at)->format('Y-m-d');
-            })
-            ->map(function ($daySales) {
-                return [
-                    'sales' => $daySales,
-                    'total_amount' => $daySales->sum('amount'),
-                ];
-            })
-            ->sortKeysDesc(); // Ensure the data is sorted by date in descending order
+        $salesData = Sales::latest()->paginate(15);
 
         return view('frontend.sales_list', compact('salesData'));
     }
+    public function index(Request $request)
+    {
+        $query = Sales::query();
+    
+        // Check if there's a search term
+        if ($request->has('search') && $request->search != '') {
+            $query->where('invoice_id', 'like', '%' . $request->search . '%');
+        }
+    
+        $salesData = $query->paginate(10); // Adjust pagination as needed
+    
+        return view('frontend.sales_list', compact('salesData'));
+    }
+    
+
+
+    public function salesReportShow($id)
+    {
+        $salesDetails = Sales::findOrFail($id);
+
+        // Decode the JSON fields
+        $decodedPurpose = json_decode($salesDetails->purpose, true);
+        $decodedAmount = json_decode($salesDetails->amount, true);
+        $totalAmount = array_sum($decodedAmount);
+
+        return view('frontend.sales_report_show', compact('decodedPurpose', 'decodedAmount', 'salesDetails', 'totalAmount'));
+    }
+
 
     public function salesReport()
     {
+        $todayTotalSalesAmount = Sales::whereDate('created_at', Carbon::today())->get()->sum(function ($sale) {
 
-        $todayTotalSalesAmount = Sales::whereDate('created_at', Carbon::today())->sum('amount');
-        //weakly day sales
+            $amounts = is_array($sale->amount) ? $sale->amount : json_decode($sale->amount, true);
+            return array_sum($amounts);
+        });
+
+        // Weekly sales
         $weekStart = Carbon::now()->startOfWeek(Carbon::SATURDAY);
         $weekEnd = Carbon::now()->endOfWeek(Carbon::SATURDAY);
 
-        // Calculate total sales amount for the current week
-        $weeklySalesAmount = Sales::whereBetween('created_at', [$weekStart, $weekEnd])->sum('amount');
+        $weeklySalesAmount = Sales::whereBetween('created_at', [$weekStart, $weekEnd])->get()->sum(function ($sale) {
+            $amounts = is_array($sale->amount) ? $sale->amount : json_decode($sale->amount, true);
+            return array_sum($amounts);
+        });
 
-        //this month sales
+        // This month's sales
         $thisMonthStart = Carbon::now()->startOfMonth();
         $thisMonthEnd = Carbon::now()->endOfMonth();
-        $thisMonthSalesAmount = Sales::whereBetween('created_at', [$thisMonthStart, $thisMonthEnd])->sum('amount');
+        $thisMonthSalesAmount = Sales::whereBetween('created_at', [$thisMonthStart, $thisMonthEnd])->get()->sum(function ($sale) {
+            $amounts = is_array($sale->amount) ? $sale->amount : json_decode($sale->amount, true);
+            return array_sum($amounts);
+        });
 
-        //this year
+        // This year's sales
         $thisYearStart = Carbon::now()->startOfYear();
         $thisYearEnd = Carbon::now()->endOfYear();
-        $thisYearSalesAmount = Sales::whereBetween('created_at', [$thisYearStart, $thisYearEnd])->sum('amount');
+        $thisYearSalesAmount = Sales::whereBetween('created_at', [$thisYearStart, $thisYearEnd])->get()->sum(function ($sale) {
+            $amounts = is_array($sale->amount) ? $sale->amount : json_decode($sale->amount, true);
+            return array_sum($amounts);
+        });
 
+
+
+        // Return the view with calculated sales data
         return view('frontend.sales_report', compact('weeklySalesAmount', 'thisMonthSalesAmount', 'thisYearSalesAmount', 'todayTotalSalesAmount'));
-    }
-
-    public function salesInvoiceList()
-    {
-        $salesInvoice = Sales::select('*')
-            ->whereIn('id', function ($query) {
-                $query->selectRaw('MAX(id)')
-                    ->from('sales')
-                    ->groupBy('name', 'phone', 'address');
-            })
-            ->latest()
-            ->get();
-        return view('frontend.sales_invoice_list', compact('salesInvoice'));
-    }
-
-    public function salesInvoiceShow(Request $request)
-    {
-        $name = $request->name;
-        $phone = $request->phone;
-        $address = $request->address;
-
-        $relatedInvoices = Sales::where('name', $name)
-            ->where('phone', $phone)
-            ->where('address', $address)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('frontend.sales_invoice_show', compact('relatedInvoices', 'name', 'phone', 'address'));
     }
 }

@@ -21,10 +21,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('sales/store', [FrontendController::class, 'store'])->name('sales.store');
 
     Route::get('sales/list', [FrontendController::class, 'salesList'])->name('sales.list');
-    Route::get('sales/report', [FrontendController::class, 'salesReport'])->name('sales.report');
+    Route::get('/sales', [FrontendController::class, 'index'])->name('sales.index');
 
-    Route::get('sales/invoice/list', [FrontendController::class, 'salesInvoiceList'])->name('sales.invoice.list');
-    Route::get('sales/invoice/show', [FrontendController::class, 'salesInvoiceShow'])->name('sales.invoice.show');
+
+    Route::get('sales/report', [FrontendController::class, 'salesReport'])->name('sales.report');
+    Route::get('sales/report/show/{id}', [FrontendController::class, 'salesReportShow'])->name('sales.report.show');
 });
 
 
@@ -41,5 +42,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('admin/sales/list', [AdminController::class, 'adminSalesList'])->name('admin.sales.list');
     Route::put('admin/sale/update/{id}', [AdminController::class, 'adminSaleUpdate'])->name('admin.sale.update');
+
+
+
+    
     Route::post('/admin/sales/filter', [AdminController::class, 'filterSales'])->name('admin.sales.filter');
 });

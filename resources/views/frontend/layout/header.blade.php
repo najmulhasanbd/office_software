@@ -29,8 +29,6 @@
                                     Report</a></button></li>
                         <li><button class="dropdown-item" type="button"><a href="{{ route('sales.list') }}">Sales
                                     List</a></button></li>
-                        <li><button class="dropdown-item" type="button"><a
-                                    href="{{ route('sales.invoice.list') }}">Sales Invoice List</a></button></li>
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

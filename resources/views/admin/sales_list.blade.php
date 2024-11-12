@@ -3,101 +3,133 @@
     <section class="content-header">
         <div class="box">
             <div class="box-header">
-                <div style="display: flex;align-items:center;justify-content:space-between">
+                <div style="display: flex;align-items:center; justify-content:center;gap:20px">
                     <div>
-                        <h2 style="font-size: 25px">Sales Report</h2>
+                        <h2 style="font-size: 25px;margin:0">Sales Report</h2>
                     </div>
                     <div>
-                        <h4 style="display: flex;align-items:center;gap:10px">Total Sales Amount : <strong
-                                style="font-size: 30px"> ৳ {{ $TotalSalesAmount }}</strong></h4>
-                    </div>
-                    <div>
-                        <form action="" method="get" id="filterForm">
-                            @csrf
+                        <div>
+                            <form action="" method="get" id="filterForm">
+                                @csrf
 
-                            <div style="display: flex; align-items:center;gap:5px">
-                                <div class="custom_select">
-                                    <input type="text" id="reportrange"
-                                        style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%"
-                                        name="date" placeholder="Filter by date" data-format="DD-MM-Y"
-                                        value="{{ $date }}" data-separator=" - " autocomplete="off">
-                                    <input type="hidden" id="dateadd" class="form-control " name="dateadd"
-                                        data-format="DD-MM-Y" value="{{ $date }}" autocomplete="off">
+                                <div style="display: flex; align-items:center;gap:5px">
+                                    <div class="custom_select">
+                                        <input type="text" id="reportrange"
+                                            style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%"
+                                            name="date" placeholder="Filter by date" data-format="DD-MM-Y"
+                                            value="{{ $date }}" data-separator=" - " autocomplete="off">
+                                        <input type="hidden" id="dateadd" class="form-control " name="dateadd"
+                                            data-format="DD-MM-Y" value="{{ $date }}" autocomplete="off">
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="btn btn-success btn-sm"
+                                            style="font-size: 15px">Filter</button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <button type="submit" class="btn btn-success btn-sm" style="font-size: 15px">Filter</button>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            </div><!-- /.box-header -->
+                </div><!-- /.box-header -->
 
-            <div class="box-body">
-                <table id="example1" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>SL</th>
-                            <th>Date</th>
-                            <th>Purpose</th>
-                            <th>Amount</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($salesData as $key => $data)
+                <div class="box-body">
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
                             <tr>
-                                <td>{{ ($salesData->currentPage() - 1) * $salesData->perPage() + $key + 1 }}</td>
-                                <td>{{ \Carbon\Carbon::parse($data->created_at)->format('d F Y h:i A') }}</td>
-                                <td>{{ $data->purpose }}</td>
-                                <td>৳ {{ $data->amount }}</td>
-                                <td>
-                                    <a href="#" data-toggle="modal" data-target="#edit{{ $data->id }}"
-                                        class="btn btn-success">Update</a>
-                                </td>
+                                <th>SL</th>
+                                <th>Invoice</th>
+                                <th>Date & Time</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Total Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
+                        </thead>
+                        <tbody>
 
-                            <!-- Modal for updating -->
-                            <div class="modal fade" id="edit{{ $data->id }}" tabindex="-1" role="dialog"
-                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header" style="display: flex; justify-content:space-between">
-                                            <h5 style="font-size: 20px">Update Sale</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form action="{{ route('admin.sale.update', $data->id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="form-group">
-                                                    <label for="amount"><b>Amount</b></label>
-                                                    <input type="number" name="amount" id="amount" class="form-control"
-                                                        min="1" value="{{ $data->amount }}" step="0.1">
-                                                </div>
-                                                <div class="form-group my-3">
-                                                    <label for="purpose"><b>Purpose</b></label>
-                                                    <textarea name="purpose" id="purpose" class="form-control" cols="30" rows="5">{{ $data->purpose }}</textarea>
-                                                </div>
-                                                <button type="submit" class="btn btn-success"><b>Update</b></button>
-                                            </form>
+                            @foreach ($salesData as $key => $sale)
+                                <tr>
+                                    <td>{{ ($salesData->currentPage() - 1) * $salesData->perPage() + $key + 1 }}</td>
+                                    <td>{{ $sale->invoice_id }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('d M Y h:i A') }}</td>
+                                    <td>{{ $sale->name }}</td>
+                                    <td>{{ $sale->phone }}</td>
+                                    <td>
+                                        @php
+                                            $amounts = is_array($sale->amount)
+                                                ? $sale->amount
+                                                : json_decode($sale->amount, true);
+                                        @endphp
+                                        <strong>৳ {{ number_format(array_sum($amounts), 2) }}</strong>
+                                    </td>
+                                    <td>
+                                        @if ($sale->updated_at != $sale->created_at)
+                                            <small style="color: gray">Edit by Admin</small>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="javascript:void(0)" data-toggle="modal" data-target="#{{ $sale->id }}"
+                                            class="btn btn-sm btn-success" title="Details">Update</a>
+                                    </td>
+                                </tr>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="{{ $sale->id }}" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">
+                                                    {{ ucwords($sale->name) }}-{{ $sale->phone }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{{ route('admin.sale.update', $sale->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+
+                                                    @php
+                                                        // Decode the JSON-encoded 'purpose' and 'amount' fields
+                                                        $decodedPurpose = json_decode($sale->purpose, true);
+                                                        $decodedAmount = json_decode($sale->amount, true);
+                                                    @endphp
+
+                                                    @foreach ($decodedPurpose as $key => $purpose)
+                                                        <div class="form-group">
+                                                            <label for="purpose">Purpose</label>
+                                                            <!-- Ensure the name is an array so that all values can be submitted -->
+                                                            <input type="text" name="purpose[]" class="form-control"
+                                                                value="{{ $purpose }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="amount">Amount</label>
+                                                            <!-- Ensure the name is an array so that all values can be submitted -->
+                                                            <input type="text" name="amount[]" class="form-control"
+                                                                value="{{ $decodedAmount[$key] }}">
+                                                        </div>
+                                                    @endforeach
+
+                                                    <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
-                    </tbody>
-                </table>
-                @if ($salesData)
-                    <div class="pagination">
-                        {{ $salesData->links() }}
-                    </div>
-                @endif
+                            @endforeach
 
+                        </tbody>
+                    </table>
+                    @if ($salesData)
+                        <div class="pagination">
+                            {{ $salesData->links() }}
+                        </div>
+                    @endif
+
+                </div>
             </div>
-        </div>
     </section>
 
 

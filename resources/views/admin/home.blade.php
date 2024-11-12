@@ -19,7 +19,7 @@
                 <!-- small box -->
                 <div class="small-box bg-aqua">
                     <div class="inner">
-                        <h3>৳ {{ $todaySalesAmount }}</h3>
+                        <h3>৳ {{ $todayTotalSalesAmount }}</h3>
                         <p>Today Sales</p>
                     </div>
                     <div class="icon">
@@ -68,10 +68,10 @@
     </section><!-- /.content -->
 
 
-    <section class="content">
+    {{-- <section class="content">
         <h2>Month-wise Sales Report</h2>
         <div id="barchart" style="width: 100%; height: 500px;"></div>
-    </section>
+    </section> --}}
 
    
 

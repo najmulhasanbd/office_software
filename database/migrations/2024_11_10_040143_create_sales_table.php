@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->string('invoice_id')->unique(8);
             $table->string('name', 100)->nullable();
             $table->string('phone', 15)->nullable();
             $table->text('address')->nullable();
-            $table->decimal('amount', 10, 1);
-            $table->longText('purpose');
+            $table->text('amount'); // Store as JSON
+            $table->longText('purpose'); // Store as JSON
             $table->timestamps();
         });        
     }
-
+    
     /**
      * Reverse the migrations.
      */

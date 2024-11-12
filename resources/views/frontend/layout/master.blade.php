@@ -59,6 +59,40 @@
             z-index: 99;
             background: #ffffff8a;
         }
+
+        body {
+            background-image: linear-gradient(to right top, #cbedee, #f3f2f3);
+        }
+
+        ul.dropdown-menu.show {
+            padding: 0;
+        }
+
+        ul.dropdown-menu.show li {
+            background: #277bbe;
+            border-bottom: 1px solid #fff;
+        }
+
+        ul.dropdown-menu.show li a {
+            color: #fff;
+        }
+
+        ul.dropdown-menu.show a {
+            background: #277bbe;
+            display: block;
+            color: #fff;
+            line-height: 1.5;
+            border-radius: 0;
+            text-align: left;
+        }
+
+        ul.dropdown-menu.show li a {
+            padding: 0 !important;
+        }
+
+        .dropdown-item:hover {
+            background: transparent;
+        }
     </style>
 </head>
 
