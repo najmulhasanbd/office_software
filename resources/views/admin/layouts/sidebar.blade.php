@@ -12,6 +12,11 @@
                     <span>Sales List</span>
                 </a>
             </li>
+            {{-- <li>
+                <a href="{{ route('admin.widthdraw') }}">
+                    <span>Withdraw</span>
+                </a>
+            </li> --}}
             {{-- <li class="treeview">
           <a href="#">
             <i class="fa fa-share"></i> <span>Multilevel</span>

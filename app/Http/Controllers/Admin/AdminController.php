@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sales;
+use App\Models\Withdraw;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,10 @@ class AdminController extends Controller
 {
     public function index()
     {
+        $totalAmount = \App\Models\Sales::all()->sum(function ($sale) {
+            $amounts = json_decode($sale->amount);
+            return array_sum($amounts);
+        });
 
         // Calculate today's total sales amount
         $todayTotalSalesAmount = Sales::whereDate('created_at', Carbon::today())->get()->sum(function ($sale) {
@@ -46,11 +51,8 @@ class AdminController extends Controller
             return array_sum($amounts);
         });
 
-        return view('admin.home',compact('weeklySalesAmount', 'thisMonthSalesAmount', 'thisYearSalesAmount', 'todayTotalSalesAmount'));
+        return view('admin.home', compact('weeklySalesAmount', 'thisMonthSalesAmount', 'thisYearSalesAmount', 'todayTotalSalesAmount', 'totalAmount'));
     }
-
-
-    
 
     public function adminSalesList(Request $request)
     {
@@ -67,16 +69,16 @@ class AdminController extends Controller
                     ->orWhereDate('created_at', $startDate);
             });
 
-            
+
             // $salesquery->whereBetween('created_at', [$startDate, $endDate]);
         }
-    
-        $salesData = $salesquery->paginate(20);
-    
 
-        return view('admin.sales_list',compact('salesData','date'));
+        $salesData = $salesquery->paginate(20);
+
+
+        return view('admin.sales_list', compact('salesData', 'date'));
     }
-    
+
 
     public function adminSaleUpdate(Request $request, $id)
     {
@@ -87,18 +89,19 @@ class AdminController extends Controller
             'amount' => 'required|array',   // Make sure amount is an array
             'amount.*' => 'numeric',        // Each item in amount should be numeric
         ]);
-    
+
         // Find the sale by its ID
         $sale = Sales::findOrFail($id);
-    
+
         // Update the sale record
         $sale->update([
             'purpose' => json_encode($request->purpose), // Store as JSON
             'amount' => json_encode($request->amount),   // Store as JSON
         ]);
-    
+
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Sale updated successfully!');
     }
-    
+
+
 }

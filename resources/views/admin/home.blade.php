@@ -63,16 +63,7 @@
                     </div>
                 </div>
             </div><!-- ./col -->
-        </div><!-- /.row -->
-
+        </div><!-- /.row -->    
     </section><!-- /.content -->
-
-
-    {{-- <section class="content">
-        <h2>Month-wise Sales Report</h2>
-        <div id="barchart" style="width: 100%; height: 500px;"></div>
-    </section> --}}
-
-   
 
 @endsection

@@ -43,8 +43,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('admin/sales/list', [AdminController::class, 'adminSalesList'])->name('admin.sales.list');
     Route::put('admin/sale/update/{id}', [AdminController::class, 'adminSaleUpdate'])->name('admin.sale.update');
 
+    //withdrwa
+    Route::get('admin/widthdraw', [AdminController::class, 'adminWidth'])->name('admin.widthdraw');
+    Route::post('admin/widthdraw/store', [AdminController::class, 'adminWidthStore'])->name('admin.widthdraw.store');
+    Route::get('/admin/widthdraw/{remainingAmount}', [AdminController::class, 'showWithdrawPage'])->name('admin.widthdraw.show');
 
 
-    
+
+    //filter
     Route::post('/admin/sales/filter', [AdminController::class, 'filterSales'])->name('admin.sales.filter');
 });

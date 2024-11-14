@@ -67,7 +67,7 @@
                                             <small style="color: gray">Edit by Admin</small>
                                         @endif
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <a href="javascript:void(0)" data-toggle="modal" data-target="#{{ $sale->id }}"
                                             class="btn btn-sm btn-success" title="Details">Update</a>
                                     </td>
